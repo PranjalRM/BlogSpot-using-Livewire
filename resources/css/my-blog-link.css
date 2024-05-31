@@ -1,0 +1,16 @@
+#myblog-container .my-blog-link
+{
+/* Define default styles */
+    color: red;  /* Default text color */
+    text-decoration: none; /* Remove underline */
+}
+
+/* Define styles when hovered */
+#myblog-container .my-blog-link:hover {
+    color: gray; /* Change text color on hover */
+}
+
+/* Define styles when clicked */
+#myblog-container .my-blog-link:active {
+    border-bottom: 2px solid blue; /* Add blue border on click */
+}
