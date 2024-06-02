@@ -22,7 +22,7 @@ class Kernel extends HttpKernel
 
     protected $routeMiddleware = [
         // Route middleware
-        'authorize.private-post' => \App\Http\Middleware\AuthorizePrivatePost::class,
+
     ];
 
     // Other middleware entries...

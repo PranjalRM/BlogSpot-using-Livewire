@@ -1,0 +1,9 @@
+.my-input-class {
+    width: 300px; /* Adjust the width as needed */
+    height: 100px; /* Adjust the height as needed */
+  }
+  
+  .fixed.top-10.right-20 {
+    right: 20px; /* Adjust the value as needed */
+  }
+ 

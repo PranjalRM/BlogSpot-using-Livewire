@@ -9,7 +9,10 @@
 </head>
 <body>
     <x-header></x-header>
-    @yield('content')
+
+   <main class="py-4">
+            @yield('content')
+    </main>
     @livewireScripts
     <script src="//unpkg.com/alpinejs" defer></script>
 </body>

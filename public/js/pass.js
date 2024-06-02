@@ -1,9 +1,15 @@
-document.getElementById('togglePassword').addEventListener('click', function (e) {
-    // Toggle the type attribute
-    const password = document.getElementById('password');
-    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-    password.setAttribute('type', type);
+function togglePasswordVisibility(inputId) {
+    const input = document.getElementById(inputId);
+    const show = input.type === 'password';
 
-    // Toggle the button text
-    this.textContent = type === 'password' ? 'Show' : 'Hide';
-});
+    input.type = show ? 'text' : 'password';
+    document.getElementById('closed-eye').classList.toggle('hidden');
+    document.getElementById('open-eye').classList.toggle('hidden');
+}
+
+function togglePasswordVisibilityEnd(inputId) {
+    const input = document.getElementById(inputId);
+    input.type = 'password';
+    document.getElementById('closed-eye').classList.remove('hidden');
+    document.getElementById('open-eye').classList.add('hidden');
+}

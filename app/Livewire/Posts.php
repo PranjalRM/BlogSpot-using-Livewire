@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Post as BlogPost;
-use App\MOdels\Post;
+use App\Models\Post;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithFileUploads;
@@ -27,15 +27,14 @@ class Posts extends Component
         'access' => 'required',
     ]; 
 
-    public function mount( $slug = null)
+    public function mount( $id = null)
     {
-        if(!Auth::check()) 
-        {
-            return redirect('login');
-        }
-
-        if($slug) {
-            $this->post = BlogPost::find($slug);
+        // if(!Auth::check()) 
+        // {
+        //     return redirect('login');
+        // }
+        if($id) {
+            $this->post = BlogPost::find($id);
             
             if($this->post) 
             {
@@ -56,23 +55,24 @@ class Posts extends Component
     public function save()
     {
         $this->validate();
+       
+        if (!$this->post->exixts)
+        {
+            $this->post->user_id = Auth::id();
+            $this->post->slug = $this->generateUniqueSlug($this->post->title);
+        }
+       
+        $this->post->title = $this->title;
+        $this->post->body = $this->body;
+        $this->post->access = $this->access;
 
-            if (!$this->post->exixts)
-            {
-                $this->post->user_id = Auth::id();
-                $this->post->slug = $this->generateUniqueSlug($this->post->title);
-            }
-        
-            $this->post->title = $this->title;
-            $this->post->body = $this->body;
-            $this->post->access = $this->access;
-
-            if ($this->image) {
-                $photoName = uniqid('post') . '.' . $this->image->extension();
-                $this->image->storeAs('public/img', $photoName); // Store photo in posts directory
-                $this->post->image= 'storage/img/'. $photoName; // Update photo path in post model
-            }
-            $this->post->save();     
+        if ($this->image) 
+        {
+            $photoName = uniqid('post') . '.' . $this->image->extension();
+            $this->image->storeAs('public/img', $photoName); // Store photo in posts directory
+            $this->post->image= 'storage/img/'. $photoName; // Update photo path in post model
+        }
+        $this->post->save();     
     }
 
     private function generateUniqueSlug($title)

@@ -38,7 +38,7 @@ class Register extends Component
         Auth::login($user);
         
         session()->flash('message', 'Registration successful.');
-        return redirect()->route('login');
+        return redirect('/');
         
     }
 

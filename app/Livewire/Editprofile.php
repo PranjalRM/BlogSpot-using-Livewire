@@ -7,15 +7,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 
-
 class Editprofile extends Component
 {
     public $name;
     public $email;
     public $current_password;
-    public $new_password,$new_password_confirmation;
-    public $confirm_password;
-    public $activeForm = 'password';
+    public $new_password;
+    public $new_password_confirmation;
 
     public function mount()
     {
@@ -24,55 +22,57 @@ class Editprofile extends Component
         $this->email = $user->email;
     }
 
-    public function switchForm($form)
+    public function updateProfileAndPassword()
     {
-        $this->activeForm = $form;
-    }
-
-    public function updateProfile()
-    {
+        $user = auth()->user();
         $this->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|string|email|max:255|unique:users,email,' . auth()->id(),
+            'current_password' => 'nullable|string|min:8',
+            'new_password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $user = Auth::user();
-        $user->name = $this->name;
-        $user->email = $this->email;
-        $user->save();
+        if (!empty($this->name) && $this->name !== $user->name) {
+            $user->name = $this->name;
+            $user->save();
+            session()->flash('message', 'Name updated successfully.');
+            return redirect('/myblog');
+        }
 
-        session()->flash('message','Profile updated successfully!');
-    }
-
-    public function updatePassword()
-    {
-        // dd($this->all());
-         $this->validate([
-            'current_password' => 'required',
-            'new_password' => ['required','min:4','confirmed'],
-            // 'new_password_confirmation' => 'required|same:new_password',
-        ]);
-       
-        $user = Auth::user();
-
-        if (!Hash::check($this->current_password,$user->password)){
-            $this->addError('current_password','The current password is incorrect.');
+        if (!empty($this->email) && $this->email !== $user->email) {
+            $user->email = $this->email;
+            $user->save();
+            session()->flash('message', 'Email updated successfully.You will be redirected to login page.');
+            $this->dispatch('logout');
             return;
         }
 
-        $user->password = Hash::make($this->new_password);
-        $user->save();
-        
-        session()->flash('message','Password updated successfully!');
-        $this->reset();
+        if (!empty($this->current_password) && !empty($this->new_password)) {
+            if (Hash::check($this->current_password, $user->password)) {
+                $user->password = Hash::make($this->new_password);
+                $user->save();
+                session()->flash('message', 'Password updated successfully.You will be redirected to login page.');
+                $this->dispatch('logout');
+                return;
+            } else {
+                session()->flash('error', 'Current password is incorrect.Try Again!!');
+                return;
+            }
+        }
+
+        session()->flash('error', 'No changes detected.');
     }
     
+    public function logoutUser()
+    {
+        Auth::logout();
+        return redirect()->route('login');
+    }
+
     public function render()
     {
         return view('livewire.editprofile')
             ->extends('layouts.app')
             ->section('content');
     }
-
-
 }

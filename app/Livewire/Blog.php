@@ -16,10 +16,6 @@ class Blog extends Component
     public function render()
     {
         $posts = Post::where('access','public') 
-               ->orWhere(function ($query){
-                    $query->where('access','private')
-                    ->where('user_id',Auth::id());
-        })
         ->paginate(5);
 
         

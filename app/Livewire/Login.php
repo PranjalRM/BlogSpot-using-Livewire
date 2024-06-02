@@ -24,6 +24,7 @@ class Login extends Component
         if(Auth::attempt(['email' => $this->email,'password' => $this->password], $this->remember))
         {
             session()->regenerate();
+            session()->flash('message', 'You have successfully logged in!');
             return redirect()->intended('/');
         }
         throw ValidationException::withMessages([
