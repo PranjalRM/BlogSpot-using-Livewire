@@ -26,5 +26,8 @@ Route::get('/post/{id}',Posts::class)
         ->name('posts.edit');
 Route::get('/login',Login::class)->name('login');
 Route::post('/logout',[Login::class,'logout'])->name('logout');
+Route::get('/logout', function() {
+        return redirect()->route('login');
+    });
 Route::get('/register',Register::class)->name('register');
 

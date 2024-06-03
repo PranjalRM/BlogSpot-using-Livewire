@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Features\SupportEvents\Events;
 
 class Myblog extends Component
 {
@@ -15,6 +16,8 @@ class Myblog extends Component
     public $editAccess;
     public $editImage;
     public $postIdToDelete;
+
+    protected $listeners = ['deleteConfirmed'=>'deletePost'];
 
     public function mount($postId = null)
     {
@@ -54,7 +57,7 @@ class Myblog extends Component
         ]);
 
         $post = Post::find($this->postId);
-        $post -> update([
+        $post->update([
             'title' => $this->editTitle,
             'body' => $this->editBody,
             'access' => $this->editAccess,
@@ -70,19 +73,23 @@ class Myblog extends Component
         $this->posts = $this->getUserPost();
     }
 
-    public function delete($postId)
+    public function deleteConfirmation($postId)
     {
         $this->postIdToDelete = $postId;
-        if (!is_null($this->postIdToDelete)) {
-            $post = Post::find($this->postIdToDelete);
-            if ($post) {
-                $post->delete();
-                $this->postIdToDelete = null; // Reset deletion state
-                $this->posts = $this->getUserPost(); // Refresh posts
-                session()->flash('message', 'Post deleted successfully!');
-            }
-        }
+
+        $this->dispatch('deleteConfirmation');
+    }     
+
+    public function deletePost()
+    {
+        $post = Post::find($this->postIdToDelete);
+        $post->delete();
+        
+        $this->dispatch('postDeleted');
+        $this->postIdToDelete = null; // Reset deletion state
+        $this->posts = $this->getUserPost(); // Refresh posts
     }
+
 
     public function render()
     {

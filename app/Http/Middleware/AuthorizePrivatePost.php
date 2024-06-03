@@ -21,7 +21,9 @@ class AuthorizePrivatePost
         $post = Post::find($postId);
     
         if ($post && $post->access === 'private' && $post->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized.');
+            $message = 'Invalid access. You don\'t have permission to view this post.';
+            return redirect('/')->with('error', $message);// Redirect with error message and red alert class
+         
         }
     
         return $next($request);

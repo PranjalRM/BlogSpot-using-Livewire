@@ -27,9 +27,15 @@ class Login extends Component
             session()->flash('message', 'You have successfully logged in!');
             return redirect()->intended('/');
         }
-        throw ValidationException::withMessages([
-            'email' => 'Invalid credentials',
-        ]);
+        $errors = [];
+            if (!Auth::attempt(['email' => $this->email, 'password' => 'invalid'], $this->remember)) {
+            $errors['email'] = 'Invalid email';
+        }
+            if (!Auth::attempt(['email' => 'invalid', 'password' => $this->password], $this->remember)) {
+            $errors['password'] = 'Incorrect Password';
+        }
+
+        throw ValidationException::withMessages($errors);
     }
 
     public function logout()

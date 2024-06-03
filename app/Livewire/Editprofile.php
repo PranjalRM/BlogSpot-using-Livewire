@@ -28,14 +28,36 @@ class Editprofile extends Component
         $this->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:users,email,' . auth()->id(),
-            'current_password' => 'nullable|string|min:8',
-            'new_password' => 'nullable|string|min:8|confirmed',
+            'current_password' => 'nullable|string|min:6',
+            'new_password' => 'nullable|string|min:6|confirmed',
         ]);
 
         if (!empty($this->name) && $this->name !== $user->name) {
             $user->name = $this->name;
             $user->save();
-            session()->flash('message', 'Name updated successfully.');
+        
+            if (!empty($this->email) && $this->email !== $user->email) {
+                $user->email = $this->email;
+                $user->save();
+                session()->flash('message', 'Name and Email updated successfully. You will be redirected to login page');
+                $this->dispatch('logout');
+                return;
+
+            } else if (!empty($this->current_password) && !empty($this->new_password)) {
+                if (Hash::check($this->current_password, $user->password)) {
+                    $user->password = Hash::make($this->new_password);
+                    $user->save();
+                    session()->flash('message', 'Name and Password updated successfully. You will be redirected to login page');
+                    $this->dispatch('logout');
+                    return;
+                } else {
+                    session()->flash('error', 'Current password is incorrect. Try Again!!');
+                    return;
+                }
+            } else {
+                session()->flash('message', 'Name updated successfully.');
+            }
+        
             return redirect('/myblog');
         }
 

@@ -43,7 +43,8 @@ class Posts extends Component
                 $this->image = $this->post->image;
                 $this->access = $this->post->access;
             } else {
-                abort(404,'POST NOT FOUND!!!!');
+                session()->flash('error', 'Invalid access. You do not have permission to view this post.');
+                return redirect('/');
             }
         } else {
             $this->post = new Post;
@@ -72,6 +73,7 @@ class Posts extends Component
             $this->image->storeAs('public/img', $photoName); // Store photo in posts directory
             $this->post->image= 'storage/img/'. $photoName; // Update photo path in post model
         }
+        // $this->dispatch('savePost');
         $this->post->save();     
     }
 

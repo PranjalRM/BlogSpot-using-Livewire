@@ -3,8 +3,12 @@
 @section('content')
 <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-sm">
     @if (session()->has('message'))
-    <x-auth.alert type="success">{{ session()->get('message') }}</x-auth.alert>
-@endif
+        <x-auth.alert type="success">{{ session()->get('message') }}</x-auth.alert>
+    @endif
+
+    @if (session()->has('error'))
+        <x-auth.alert type="error">{{ session()->get('error') }}</x-auth.alert>
+    @endif
 </div>
 <div class="container mx-auto p-5">
     <h1 class="text-4xl mt-10 text-center tracking-tight leading-10 font-extrabold text-gray-900 sm:text-5xl sm:leading-none md:text-6xl">

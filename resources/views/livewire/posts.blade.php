@@ -22,4 +22,7 @@
             <x-auth.form-submit>Submit Post</x-auth.form-submit>
         </x-auth.form-all>
     @endif
+    
+    <script src="{{ asset('js/createPost.js') }}"></script>
+    @livewireScripts
 </div>
